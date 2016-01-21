@@ -19,11 +19,12 @@ public:
 	//"02_getting_an_image_on_the_screen/hello_world.bmp"
 
 	Game(){
-		std::cout<<"init";
+		std::cout<<"init"<<std::endl;
 		renderer.init();
-		renderer.loadBackground("preview");
+		renderer.loadImage("Src/Xout.bmp");
 		renderer.blit();
-		renderer.wait(2500);
+		renderer.loop();
+		renderer.wait(9000);
 		renderer.close();
 	}
 

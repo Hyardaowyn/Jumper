@@ -9,6 +9,10 @@
 #include <Renderer.h>
 #include <stdio.h>
 #include <iostream>
+
+//Key press surfaces constants
+
+
 bool Renderer::init(){
 
 	//Initialization flag
@@ -43,16 +47,16 @@ bool Renderer::blit(){
 	std::cout<<"blit: "<<gHelloWorld<<std::endl;
 	std::cout<<"blit2: "<<gScreenSurface<<std::endl;
 
-	//int result=SDL_BlitSurface( gHelloWorld, NULL, gScreenSurface, NULL );// returns 0 if blit is succesful
+	int result=SDL_BlitSurface( gHelloWorld, NULL, gScreenSurface, NULL );// returns 0 if blit is succesful
 
 	//std::cout<<result<<std::endl;
 	//Update the surface
 	SDL_UpdateWindowSurface( gWindow );
 
-	//if (result==false)
-	//	std::cout<<"error in blit"<<std::endl;
-	//return result;
-	return true;
+	if (result==0)
+		std::cout<<" no error in blit"<<std::endl;
+	return result;
+
 }
 
 void Renderer::wait(int ms){
@@ -60,26 +64,27 @@ void Renderer::wait(int ms){
 	SDL_Delay(ms);
 }
 
-bool Renderer::loadBackground(std::string myPath)
+SDL_Surface* Renderer::loadImage(std::string myPath)
 {
 	//Loading success flag
-	bool success = true;
-
-	//Load splash image
-	//myPath.c_str()
-
-	gHelloWorld = SDL_LoadBMP( "Src/preview2.bmp" );
+	SDL_Surface* mySurface=NULL;
+	mySurface = SDL_LoadBMP( myPath.c_str() );
 	std::cout<< "myPath:"<<myPath.c_str()<<std::endl;
-	std::cout<<"location of image: "<<gHelloWorld<<std::endl;
+	std::cout<<"memory address of image: "<<mySurface<<std::endl;
 	if( gHelloWorld == NULL )
 	{
-		std::cout<<"ghelloworld null in loadbackground"<<std::endl;
-		std::cout<<gHelloWorld<<std::endl;
 		printf( "Unable to load image %s! SDL Error: %s\n", myPath.c_str(), SDL_GetError() );
-		success = false;
 	}
 
-	return success;
+	return mySurface;
+}
+
+void Renderer::loadImages(){
+	imageArray[ KEY_PRESS_SURFACE_DEFAULT];
+	std::string files[]={"Src/preview2.bmp","Src/up.bmp","Src/down.bmp","Src/left.bmp","Src/right.bmp","Src/Xout.bmp"};
+for(int i=0;i<= KEY_PRESS_SURFACE_TOTAL;i++){
+	imageArray[i]=loadImage(files[i]);
+}
 }
 
 void Renderer::close()
@@ -95,3 +100,33 @@ void Renderer::close()
 	//Quit SDL subsystems
 	SDL_Quit();
 }
+
+void Renderer::loop(){
+	//Main loop flag
+	bool quit = false;
+	SDL_Surface* gScreenSurface = NULL;
+	gHelloWorld=loadImage("Src/preview2.bmp");
+	blit();
+	//Event handler
+	SDL_Event e;
+
+	while(!quit){
+		//Handle events on queue
+		while( SDL_PollEvent( &e ) != 0 )
+		{
+			//User requests quit
+			if( e.type == SDL_QUIT )
+			{
+				quit = true;
+			}
+		}
+	}
+	std::cout<<"location of image: "<<gHelloWorld<<std::endl;
+	//Apply the image
+	//SDL_BlitSurface( gHelloWorld, NULL, gScreenSurface, NULL );
+	blit();
+
+	//Update the surface
+	SDL_UpdateWindowSurface( gWindow );
+}
+

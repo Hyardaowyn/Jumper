@@ -9,6 +9,18 @@
 #define HEADERS_RENDERER_H_
 #include <iostream>
 #include <SDL.h>
+
+enum KeyPressSurfaces
+{
+    KEY_PRESS_SURFACE_DEFAULT,
+    KEY_PRESS_SURFACE_UP,
+    KEY_PRESS_SURFACE_DOWN,
+    KEY_PRESS_SURFACE_LEFT,
+    KEY_PRESS_SURFACE_RIGHT,
+    KEY_PRESS_SURFACE_TOTAL
+};
+
+
 class Renderer{
 
 	// window settings
@@ -23,13 +35,16 @@ class Renderer{
 
 	//The image we will load and show on the screen
 	SDL_Surface* gHelloWorld = NULL;
+
+	SDL_Surface* imageArray[KEY_PRESS_SURFACE_TOTAL];
 public:
 	bool init();
-	bool loadBackground(std::string myPath);
+	SDL_Surface* loadImage(std::string myPath);
 	bool blit();
 	void wait(int);
 	void close();
-
+	void loop();
+	void loadImages();
 };
 
 
